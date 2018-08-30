@@ -3,6 +3,7 @@
     <test name="case1">
         <classes>
             <class name="vn.mra.core.test.RoleTest"/>
+            <class name="vn.mra.core.test.UserTest"/>
         </classes>
     </test>
 </suite>

@@ -12,4 +12,7 @@ public interface GenericDao<ID extends Serializable, T> {
 
     T findById(ID id);
 
+    Integer delete(List<ID> idList);
+
+    T findEqualUnique(String property, Object value);
 }

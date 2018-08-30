@@ -5,6 +5,7 @@ import vn.mra.core.dao.RoleDao;
 import vn.mra.core.daoimpl.RoleDaoImpl;
 import vn.mra.core.persistence.entity.RoleEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RoleTest {
@@ -35,5 +36,32 @@ public class RoleTest {
     public void checkFindById() {
         RoleDao roleDao = new RoleDaoImpl();
         RoleEntity entity = roleDao.findById(1);
+    }
+
+    @Test
+    public void checkFindByRole() {
+        RoleDao roleDao = new RoleDaoImpl();
+        List<String> roles = new ArrayList<String>();
+        roles.add("ADMIN");
+        roles.add("USER");
+        List<RoleEntity> roleEntities = roleDao.findByRoles(roles);
+        for (RoleEntity role : roleEntities
+        ) {
+            System.out.println(role.getName());
+        }
+    }
+
+    @Test
+    public void checkDeleteRole() {
+        RoleDao roleDao = new RoleDaoImpl();
+        List<Integer> ids = new ArrayList<Integer>();
+        ids.add(4);
+        roleDao.delete(ids);
+    }
+
+    @Test
+    public void checkFindEqualUnique() {
+        RoleDao roleDao = new RoleDaoImpl();
+        RoleEntity roleEntity = roleDao.findEqualUnique("roleId", 1);
     }
 }

@@ -1,5 +1,6 @@
 package vn.mra.core.data.daoimpl;
 
+import org.apache.log4j.Logger;
 import org.hibernate.*;
 import vn.mra.core.common.utils.HibernateUtil;
 import vn.mra.core.data.dao.GenericDao;
@@ -9,6 +10,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
 public class AbstractDao<ID extends Serializable, T> implements GenericDao<ID, T> {
+    private final Logger log = Logger.getLogger(this.getClass());
     private Class<T> persistenceClass;
 
     public AbstractDao() {
@@ -32,6 +34,7 @@ public class AbstractDao<ID extends Serializable, T> implements GenericDao<ID, T
             transaction.commit();
         } catch (HibernateException e) {
             transaction.rollback();
+            log.error(e.getMessage(), e);
             throw e;
         } finally {
             session.close();
@@ -52,6 +55,7 @@ public class AbstractDao<ID extends Serializable, T> implements GenericDao<ID, T
 
         } catch (HibernateException e) {
             transaction.rollback();
+            log.error(e.getMessage(), e);
             throw e;
         } finally {
             session.close();
@@ -68,6 +72,7 @@ public class AbstractDao<ID extends Serializable, T> implements GenericDao<ID, T
             transaction.commit();
         } catch (HibernateException e) {
             transaction.rollback();
+            log.error(e.getMessage(), e);
             throw e;
         } finally {
             session.close();
@@ -87,6 +92,50 @@ public class AbstractDao<ID extends Serializable, T> implements GenericDao<ID, T
             transaction.commit();
         } catch (HibernateException e) {
             transaction.rollback();
+            log.error(e.getMessage(), e);
+            throw e;
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public Integer delete(List<ID> idList) {
+        Integer result = 0;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        try {
+            for (ID item : idList) {
+                T t = this.findById(item);
+                session.delete(t);
+                result++;
+            }
+            transaction.commit();
+        } catch (HibernateException e) {
+            transaction.rollback();
+            log.error(e.getMessage(), e);
+            throw e;
+        } finally {
+            session.close();
+        }
+        return result;
+    }
+
+    @Override
+    public T findEqualUnique(String property, Object value) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        T result;
+        try {
+            StringBuilder sql = new StringBuilder(" FROM ");
+            sql.append(this.getPersistenceClassName()).append(" model WHERE model.").append(property).append("= :value");
+            Query query = session.createQuery(sql.toString());
+            query.setParameter("value", value);
+            result = (T) query.uniqueResult();
+        } catch (HibernateException e) {
+            transaction.rollback();
+            log.error(e.getMessage(), e);
             throw e;
         } finally {
             session.close();
