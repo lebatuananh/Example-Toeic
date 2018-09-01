@@ -1,7 +1,7 @@
 package vn.mra.core.test;
 
 import org.testng.annotations.Test;
-import vn.mra.core.dao.RoleDao;
+import vn.mra.core.dao.IRoleDao;
 import vn.mra.core.daoimpl.RoleDaoImpl;
 import vn.mra.core.persistence.entity.RoleEntity;
 
@@ -11,13 +11,13 @@ import java.util.List;
 public class RoleTest {
     @Test
     public void checkFindAll() {
-        RoleDao roleDao = new RoleDaoImpl();
+        IRoleDao roleDao = new RoleDaoImpl();
         List<RoleEntity> list = roleDao.findAll();
     }
 
     @Test
     public void checkedUpdateRole() {
-        RoleDao roleDao = new RoleDaoImpl();
+        IRoleDao roleDao = new RoleDaoImpl();
         RoleEntity entity = new RoleEntity();
         entity.setName("USER_TEST1");
         entity.setRoleId(3);
@@ -26,7 +26,7 @@ public class RoleTest {
 
     @Test
     public void checkSaveRole() {
-        RoleDao roleDao = new RoleDaoImpl();
+        IRoleDao roleDao = new RoleDaoImpl();
         RoleEntity entity = new RoleEntity();
         entity.setName("STUDENT");
         roleDao.save(entity);
@@ -34,13 +34,13 @@ public class RoleTest {
 
     @Test
     public void checkFindById() {
-        RoleDao roleDao = new RoleDaoImpl();
+        IRoleDao roleDao = new RoleDaoImpl();
         RoleEntity entity = roleDao.findById(1);
     }
 
     @Test
     public void checkFindByRole() {
-        RoleDao roleDao = new RoleDaoImpl();
+        IRoleDao roleDao = new RoleDaoImpl();
         List<String> roles = new ArrayList<String>();
         roles.add("ADMIN");
         roles.add("USER");
@@ -53,7 +53,7 @@ public class RoleTest {
 
     @Test
     public void checkDeleteRole() {
-        RoleDao roleDao = new RoleDaoImpl();
+        IRoleDao roleDao = new RoleDaoImpl();
         List<Integer> ids = new ArrayList<Integer>();
         ids.add(4);
         roleDao.delete(ids);
@@ -61,7 +61,7 @@ public class RoleTest {
 
     @Test
     public void checkFindEqualUnique() {
-        RoleDao roleDao = new RoleDaoImpl();
+        IRoleDao roleDao = new RoleDaoImpl();
         RoleEntity roleEntity = roleDao.findEqualUnique("roleId", 1);
     }
 }

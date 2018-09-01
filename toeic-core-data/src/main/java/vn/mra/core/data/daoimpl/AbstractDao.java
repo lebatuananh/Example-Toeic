@@ -2,14 +2,15 @@ package vn.mra.core.data.daoimpl;
 
 import org.apache.log4j.Logger;
 import org.hibernate.*;
+import vn.mra.core.common.constant.CoreConstant;
 import vn.mra.core.common.utils.HibernateUtil;
-import vn.mra.core.data.dao.GenericDao;
+import vn.mra.core.data.dao.IGenericDao;
 
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
-public class AbstractDao<ID extends Serializable, T> implements GenericDao<ID, T> {
+public class AbstractDao<ID extends Serializable, T> implements IGenericDao<ID, T> {
     private final Logger log = Logger.getLogger(this.getClass());
     private Class<T> persistenceClass;
 
@@ -98,6 +99,49 @@ public class AbstractDao<ID extends Serializable, T> implements GenericDao<ID, T
             session.close();
         }
         return result;
+    }
+
+    @Override
+    public Object[] findByProperty(String property, Object value, String sortExpression, String sortDirection) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        List<T> list;
+        Object totalItem;
+        try {
+            StringBuilder sql = new StringBuilder();
+            sql.append("FROM ").append(getPersistenceClassName());
+            if (property != null && value != null) {
+                sql.append(" WHERE ").append(property).append("= :value");
+            }
+            if (sortDirection != null && sortExpression != null) {
+                sql.append(" ORDER BY ").append(sortExpression).append(" ")
+                        .append(sortDirection.equals("ASC") ? CoreConstant.SORT_ASC : CoreConstant.SORT_DESC);
+            }
+            Query query = session.createQuery(sql.toString());
+            if (property != null && value != null) {
+                query.setParameter("value", value);
+            }
+            list = query.list();
+
+            StringBuilder sql2 = new StringBuilder();
+            sql2.append("SELECT COUNT(*) FROM ").append(getPersistenceClassName());
+            if (property != null && value != null) {
+                sql2.append(" WHERE ").append(property).append("= :value");
+            }
+            Query query1 = session.createQuery(sql2.toString());
+            if (property != null && value != null) {
+                query1.setParameter("value", value);
+            }
+            totalItem = query1.list().get(0);
+            transaction.commit();
+        } catch (HibernateException e) {
+            transaction.rollback();
+            log.error(e.getMessage(), e);
+            throw e;
+        } finally {
+            session.close();
+        }
+        return new Object[]{list, totalItem};
     }
 
     @Override

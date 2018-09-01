@@ -5,14 +5,14 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import vn.mra.core.common.utils.HibernateUtil;
-import vn.mra.core.dao.UserDao;
+import vn.mra.core.dao.IUserDao;
 import vn.mra.core.data.daoimpl.AbstractDao;
 import vn.mra.core.persistence.entity.UserEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDaoImpl extends AbstractDao<Integer, UserEntity> implements UserDao {
+public class UserDaoImpl extends AbstractDao<Integer, UserEntity> implements IUserDao {
     @Override
     public Object[] checkLogin(String name, String password) {
         Session session = HibernateUtil.getSessionFactory().openSession();

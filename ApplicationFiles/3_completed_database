@@ -1,0 +1,528 @@
+create table listenguideline (
+  listenguidelineid bigint       not null primary key auto_increment,
+  title             varchar(512) null,
+  image             varchar(255) null,
+  content           text         null,
+  createddate       timestamp    null,
+  modifieddate      timestamp    null
+);
+create table comment (
+  commentid         bigint    not null primary key auto_increment,
+  content           text      null,
+  userid            bigint    null,
+  listenguidelineid bigint    null,
+  createddate       timestamp null
+);
+alter table comment
+  add constraint fk_user_comment foreign key (userid) references user (userid);
+alter table comment
+  add constraint fk_user_listenguideline foreign key (listenguidelineid) references listenguideline (listenguidelineid);
+select *
+from role;
+select *
+from listenguideline;
+
+
+INSERT INTO listenguideline (title, content, createddate)
+VALUES ('Bai hd 1', 'Noi dung bai hd 1', CURRENT_TIMESTAMP);
+INSERT INTO listenguideline (title, content, createddate)
+VALUES ('Bai hd 2', 'Noi dung bai hd 2', CURRENT_TIMESTAMP);
+INSERT INTO listenguideline (title, content, createddate)
+VALUES ('Bai hd 3', 'Noi dung bai hd 3', CURRENT_TIMESTAMP);
+INSERT INTO listenguideline (title, content, createddate)
+VALUES ('Bai hd 4', 'Noi dung bai hd 4', CURRENT_TIMESTAMP);
+INSERT INTO listenguideline (title, content, createddate)
+VALUES ('Bai hd 5', 'Noi dung bai hd 5', CURRENT_TIMESTAMP);
+INSERT INTO listenguideline (title, content, createddate)
+VALUES ('Bai hd 6', 'Noi dung bai hd 6', CURRENT_TIMESTAMP);
+INSERT INTO listenguideline (title, content, createddate)
+VALUES ('Bai hd 7', 'Noi dung bai hd 7', CURRENT_TIMESTAMP);
+INSERT INTO listenguideline (title, content, createddate)
+VALUES ('Bai hd 8', 'Noi dung bai hd 8', CURRENT_TIMESTAMP);
+
+
+ALTER TABLE user
+  MODIFY COLUMN name VARCHAR(255) NOT NULL;
+ALTER TABLE user
+  MODIFY COLUMN password VARCHAR(255) NOT NULL;
+ALTER TABLE user
+  MODIFY COLUMN roleid BIGINT(20) NOT NULL;
+
+ALTER TABLE user
+  ADD UNIQUE (name);
+
+ALTER TABLE listenguideline
+  MODIFY COLUMN title VARCHAR(512) NOT NULL;
+ALTER TABLE listenguideline
+  MODIFY COLUMN content TEXT NOT NULL;
+ALTER TABLE listenguideline
+  MODIFY COLUMN createddate TIMESTAMP NOT NULL;
+
+ALTER TABLE listenguideline
+  ADD UNIQUE (title);
+
+UPDATE listenguideline
+SET image = 'Java-Framework.png'
+WHERE listenguidelineid = 1;
+UPDATE listenguideline
+SET image = 'Java-Framework.png'
+WHERE listenguidelineid = 2;
+
+CREATE TABLE exercisetype (
+  exercisetypeid bigint       NOT NULL PRIMARY KEY auto_increment,
+  name           VARCHAR(100) NOT NULL,
+  code           VARCHAR(100) NOT NULL,
+  createddate    TIMESTAMP    null,
+  modifieddate   TIMESTAMP    null,
+  unique (name)
+);
+INSERT INTO exercisetype (name, code, createddate)
+VALUES ('Bài tập phần nghe', 'listening', CURRENT_TIMESTAMP);
+INSERT INTO exercisetype (name, code, createddate)
+VALUES ('Bài tập phần đọc', 'reading', CURRENT_TIMESTAMP);
+SELECT *
+FROM exercisetype;
+
+CREATE TABLE exercise (
+  exerciseid     bigint       NOT NULL PRIMARY KEY auto_increment,
+  name           VARCHAR(100) NOT NULL,
+  exercisetypeid BIGINT       NOT NULL,
+  createddate    TIMESTAMP    null,
+  modifieddate   TIMESTAMP    null,
+  unique (name)
+);
+ALTER TABLE exercise
+  ADD CONSTRAINT fk_exercise_exercisetype FOREIGN KEY (exercisetypeid) REFERENCES exercisetype (exercisetypeid);
+
+INSERT INTO exercise (name, createddate, exercisetypeid)
+VALUES ('Bài tập nghe 1', CURRENT_TIMESTAMP, 1);
+INSERT INTO exercise (name, createddate, exercisetypeid)
+VALUES ('Bài tập đọc 1', CURRENT_TIMESTAMP, 2);
+
+SELECT *
+FROM exercise;
+
+CREATE TABLE exercisequestion (
+  exercisequestionid     bigint       NOT NULL PRIMARY KEY auto_increment,
+  image                  VARCHAR(255),
+  audio                  VARCHAR(255),
+  question               TEXT         NOT NULL,
+  option1                VARCHAR(300) NOT NULL,
+  option2                VARCHAR(300) NOT NULL,
+  option3                VARCHAR(300) NOT NULL,
+  option4                VARCHAR(300) NOT NULL,
+  correctanswer          VARCHAR(10)  NOT NULL,
+  exerciseid             BIGINT       NOT NULL,
+  exercisequestiontypeid BIGINT       NOT NULL,
+  createddate            TIMESTAMP    null,
+  modifieddate           TIMESTAMP    null
+);
+ALTER TABLE exercisequestion
+  ADD CONSTRAINT fk_exercisequestion_exercisequestiontype FOREIGN KEY (exercisequestiontypeid)
+REFERENCES exercisequestiontype (exercisequestiontypeid);
+
+ALTER TABLE exercisequestion
+  ADD CONSTRAINT fk_exercisequestion_exercise FOREIGN KEY (exerciseid) REFERENCES exercise (exerciseid);
+
+INSERT INTO exercisequestiontype (name, code, createddate)
+VALUES ('PHOTO', 'PHOTO', CURRENT_TIMESTAMP);
+INSERT INTO exercisequestiontype (name, code, createddate)
+VALUES ('QUESTION RESPONSE', 'QUESTION_RESPONSE', CURRENT_TIMESTAMP);
+INSERT INTO exercisequestiontype (name, code, createddate)
+VALUES ('SINGLE PASSAGE', 'SINGLE_PASSAGE', CURRENT_TIMESTAMP);
+
+SELECT *
+FROM exercisequestiontype;
+
+DROP TABLE exercisequestiontype;
+
+CREATE TABLE exercisequestiontype (
+  exercisequestiontypeid bigint       NOT NULL PRIMARY KEY auto_increment,
+  name                   VARCHAR(100) NOT NULL,
+  code                   VARCHAR(100) NOT NULL,
+  createddate            TIMESTAMP    null,
+  modifieddate           TIMESTAMP    null,
+  unique (name)
+);
+
+INSERT INTO exercisequestion (image,
+                              audio,
+                              question,
+                              option1,
+                              option2,
+                              option3,
+                              option4,
+                              correctanswer,
+                              createddate,
+                              exerciseid,
+                              exercisequestiontypeid)
+VALUES ('exercise/image_1.jpg',
+        'exercise/audio_1.mp3',
+        'Look at the picture and listen to the sentences in the Part 1 TOEIC Test. Choose the sentence that best describes the picture:',
+        'A',
+        'B',
+        'C',
+        'D',
+        'A',
+        CURRENT_TIMESTAMP,
+        1,
+        1);
+INSERT INTO exercisequestion (image,
+                              audio,
+                              question,
+                              option1,
+                              option2,
+                              option3,
+                              option4,
+                              correctanswer,
+                              createddate,
+                              exerciseid,
+                              exercisequestiontypeid)
+VALUES ('exercise/image_2.jpg',
+        'exercise/audio_2.mp3',
+        'Look at the picture and listen to the sentences in the Part 1 TOEIC Test. Choose the sentence that best describes the picture:',
+        'A',
+        'B',
+        'C',
+        'D',
+        'B',
+        CURRENT_TIMESTAMP,
+        1,
+        1);
+INSERT INTO exercisequestion (image,
+                              audio,
+                              question,
+                              option1,
+                              option2,
+                              option3,
+                              option4,
+                              correctanswer,
+                              createddate,
+                              exerciseid,
+                              exercisequestiontypeid)
+VALUES ('exercise/image_3.jpg',
+        'exercise/audio_3.mp3',
+        'Look at the picture and listen to the sentences in the Part 1 TOEIC Test. Choose the sentence that best describes the picture:',
+        'A',
+        'B',
+        'C',
+        'D',
+        'C',
+        CURRENT_TIMESTAMP,
+        1,
+        1);
+INSERT INTO exercisequestion (image,
+                              audio,
+                              question,
+                              option1,
+                              option2,
+                              option3,
+                              option4,
+                              correctanswer,
+                              createddate,
+                              exerciseid,
+                              exercisequestiontypeid)
+VALUES ('exercise/image_4.jpg',
+        'exercise/audio_4.mp3',
+        'Look at the picture and listen to the sentences in the Part 1 TOEIC Test. Choose the sentence that best describes the picture:',
+        'A',
+        'B',
+        'C',
+        'D',
+        'D',
+        CURRENT_TIMESTAMP,
+        1,
+        1);
+
+INSERT INTO exercisequestion (question,
+                              option1,
+                              option2,
+                              option3,
+                              option4,
+                              correctanswer,
+                              createddate,
+                              exerciseid,
+                              exercisequestiontypeid)
+VALUES ('I dont think he will remember the appointment you remind him.',
+        'so',
+        'if',
+        'unless',
+        'lest',
+        'C',
+        CURRENT_TIMESTAMP,
+        2,
+        2);
+
+INSERT INTO exercisequestion (question,
+                              option1,
+                              option2,
+                              option3,
+                              option4,
+                              correctanswer,
+                              createddate,
+                              exerciseid,
+                              exercisequestiontypeid)
+VALUES ('The river has overflowed his banks _____ it has been raining continuously for several days.',
+        'still',
+        'yet',
+        'when',
+        'as',
+        'D',
+        CURRENT_TIMESTAMP,
+        2,
+        2);
+
+INSERT INTO exercisequestion (question,
+                              option1,
+                              option2,
+                              option3,
+                              option4,
+                              correctanswer,
+                              createddate,
+                              exerciseid,
+                              exercisequestiontypeid)
+VALUES ('Those village folk are poor _____ they always seem so contented.',
+        'still',
+        'yet',
+        'when',
+        'as',
+        'C',
+        CURRENT_TIMESTAMP,
+        2,
+        2);
+
+INSERT INTO exercisequestion (question,
+                              option1,
+                              option2,
+                              option3,
+                              option4,
+                              correctanswer,
+                              createddate,
+                              exerciseid,
+                              exercisequestiontypeid)
+VALUES ('he was not interested in music, he agreed to go to the concert.',
+        'still',
+        'yet',
+        'when',
+        'as',
+        'A',
+        CURRENT_TIMESTAMP,
+        2,
+        2);
+
+select *
+from exercisequestion;
+
+
+CREATE TABLE examination (
+  examinationid bigint       NOT NULL PRIMARY KEY auto_increment,
+  name          VARCHAR(255) NOT NULL,
+  createddate   TIMESTAMP    null,
+  modifieddate  TIMESTAMP    null,
+  unique (name)
+);
+
+CREATE TABLE examinationquestion (
+  examinationquestionid bigint       NOT NULL PRIMARY KEY auto_increment,
+  image                 VARCHAR(255),
+  audio                 VARCHAR(255),
+  question              TEXT         NOT NULL,
+  paragraph             TEXT,
+  option1               VARCHAR(300) NOT NULL,
+  option2               VARCHAR(300) NOT NULL,
+  option3               VARCHAR(300) NOT NULL,
+  option4               VARCHAR(300) NOT NULL,
+  correctanswer         VARCHAR(10)  NOT NULL,
+  examinationid         BIGINT       NOT NULL,
+  createddate           TIMESTAMP    null,
+  modifieddate          TIMESTAMP    null
+);
+ALTER TABLE examinationquestion
+  ADD COLUMN exercisequestiontypeid BIGINT NOT NULL;
+
+ALTER TABLE examinationquestion
+  ADD CONSTRAINT fk_examinationquestion_exercisequestiontype FOREIGN KEY (exercisequestiontypeid)
+REFERENCES exercisequestiontype (exercisequestiontypeid);
+
+ALTER TABLE examinationquestion
+  ADD CONSTRAINT fk_examinationquestion_examination FOREIGN KEY (examinationid) REFERENCES examination (examinationid);
+
+
+CREATE TABLE result (
+  resultid      bigint    NOT NULL PRIMARY KEY auto_increment,
+  listenscore   INT       NOT NULL,
+  readingscore  INT       NOT NULL,
+  examinationid BIGINT    NOT NULL,
+  userid        BIGINT    NOT NULL,
+  createddate   TIMESTAMP null,
+  modifieddate  TIMESTAMP null
+);
+
+ALTER TABLE result
+  ADD CONSTRAINT fk_result_examination FOREIGN KEY (examinationid) REFERENCES examination (examinationid);
+ALTER TABLE result
+  ADD CONSTRAINT fk_result_user FOREIGN KEY (userid) REFERENCES user (userid);
+
+INSERT INTO examination (name, createddate)
+VALUES ('Bài thi 1', CURRENT_TIMESTAMP);
+
+select *
+from examination;
+
+select *
+from examinationquestion;
+
+SELECT *
+FROM examinationquestion;
+
+INSERT INTO examinationquestion (image,
+                                 audio,
+                                 option1,
+                                 option2,
+                                 option3,
+                                 option4,
+                                 question,
+                                 correctanswer,
+                                 createddate,
+                                 examinationid,
+                                 exercisequestiontypeid)
+VALUES ('examination/image_1.jpg',
+        'examination/audio_1.mp3',
+        'A. The man is diving into the water',
+        'B. The man is fishing from the railing',
+        'C. The man is packing up his fishing gear',
+        'D. The man is purchasing some fish',
+        'Look at the picture and listen to the sentences in the Part 1 TOEIC Test. Choose the sentence that best describes the picture:',
+        'A',
+        CURRENT_TIMESTAMP,
+        1,
+        1);
+
+INSERT INTO examinationquestion (image,
+                                 audio,
+                                 option1,
+                                 option2,
+                                 option3,
+                                 option4,
+                                 question,
+                                 correctanswer,
+                                 createddate,
+                                 examinationid,
+                                 exercisequestiontypeid)
+VALUES ('examination/image_2.jpg',
+        'examination/audio_2.mp3',
+        'A. The man is diving into the water',
+        'B. The man is fishing from the railing',
+        'C. The man is packing up his fishing gear',
+        'D. The man is purchasing some fish',
+        'Look at the picture and listen to the sentences in the Part 1 TOEIC Test. Choose the sentence that best describes the picture:',
+        'B',
+        CURRENT_TIMESTAMP,
+        1,
+        1);
+
+INSERT INTO examinationquestion (audio,
+                                 option1,
+                                 option2,
+                                 option3,
+                                 option4,
+                                 question,
+                                 correctanswer,
+                                 createddate,
+                                 examinationid,
+                                 exercisequestiontypeid)
+VALUES ('examination/audio_3.mp3',
+        'A. The man is diving into the water',
+        'B. The man is fishing from the railing',
+        'C. The man is packing up his fishing gear',
+        'D. The man is purchasing some fish',
+        'Look at the picture and listen to the sentences in the Part 1 TOEIC Test. Choose the sentence that best describes the picture:',
+        'B',
+        CURRENT_TIMESTAMP,
+        1,
+        2);
+
+INSERT INTO examinationquestion (audio,
+                                 option1,
+                                 option2,
+                                 option3,
+                                 option4,
+                                 question,
+                                 correctanswer,
+                                 createddate,
+                                 examinationid,
+                                 exercisequestiontypeid)
+VALUES ('examination/audio_4.mp3',
+        'A. The man is diving into the water',
+        'B. The man is fishing from the railing',
+        'C. The man is packing up his fishing gear',
+        'D. The man is purchasing some fish',
+        'Listen to the question and the three responses. Choose the response that best answers the question:',
+        'A',
+        CURRENT_TIMESTAMP,
+        1,
+        2);
+
+INSERT INTO examinationquestion (question, paragraph, createddate, examinationid, exercisequestiontypeid)
+VALUES ('Read the passage and choose the correct answer:',
+        'Eli Finance, the largest real estate financier in the Middle East by market value and total assets, today proudly announced that it received the award for the “Best Financial Services Company in the UAE” during the 2008 Liquid Real Estate Awards ceremony organized by Euromoney. Euromoney Liquid Real Estate Awards honor the world’s leading institutions for their ability to innovate and develop new products and services to meet the market’s demand in today’s increasingly challenging financial environment, as well as make the most efficient use of the inherent strengths within their organization. Speaking on the occasion, Mr. Ismael Alharmi, Chief Executive Officer of Eli Finance said, “We are honored to receive this prestigious award and I would like to thank our staff at Eli for their efforts',
+        CURRENT_TIMESTAMP,
+        1,
+        3);
+
+INSERT INTO examinationquestion (question,
+                                 option1,
+                                 option2,
+                                 option3,
+                                 option4,
+                                 correctanswer,
+                                 createddate,
+                                 examinationid,
+                                 exercisequestiontypeid)
+VALUES ('What is the subject of the news report?',
+        'A. A national park',
+        'B. A local zoo',
+        'C. Commercial products',
+        'D. Landscaping land',
+        'B',
+        CURRENT_TIMESTAMP,
+        1,
+        3);
+
+INSERT INTO examinationquestion (question,
+                                 option1,
+                                 option2,
+                                 option3,
+                                 option4,
+                                 correctanswer,
+                                 createddate,
+                                 examinationid,
+                                 exercisequestiontypeid)
+VALUES ('According to the speaker, what does Algonquin National Park have?',
+        'A. Unique rock formations',
+        'B. A lot of different animals',
+        'C. Unusual potted plants',
+        'D. Beautiful waterfalls',
+        'A',
+        CURRENT_TIMESTAMP,
+        1,
+        3);
+
+INSERT INTO examinationquestion (question,
+                                 option1,
+                                 option2,
+                                 option3,
+                                 option4,
+                                 correctanswer,
+                                 createddate,
+                                 examinationid,
+                                 exercisequestiontypeid)
+VALUES ('What do some people expect will happen?',
+        'A. The wildlife will relocate',
+        'B. It will increase local business',
+        ' C. New homes will be built',
+        'D. They will change their minds',
+        'B',
+        CURRENT_TIMESTAMP,
+        1,
+        3);

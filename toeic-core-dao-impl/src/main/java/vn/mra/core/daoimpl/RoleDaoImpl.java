@@ -5,14 +5,14 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import vn.mra.core.common.utils.HibernateUtil;
-import vn.mra.core.dao.RoleDao;
+import vn.mra.core.dao.IRoleDao;
 import vn.mra.core.data.daoimpl.AbstractDao;
 import vn.mra.core.persistence.entity.RoleEntity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoleDaoImpl extends AbstractDao<Integer, RoleEntity> implements RoleDao {
+public class RoleDaoImpl extends AbstractDao<Integer, RoleEntity> implements IRoleDao {
     @Override
     public List<RoleEntity> findByRoles(List<String> roles) {
         Session session = HibernateUtil.getSessionFactory().openSession();
